@@ -20,7 +20,7 @@ application_name = 'PyBeacon'
 firstTime = time.time()
 f = open("info.log", 'a')
 
-con = sqlite3.connect("/home/pi/Desktop/beaconnn.db")
+con = sqlite3.connect("beaconnn.db")
 cursor = con.cursor()
 
 #logging.basicConfig(filename='info.log',level='logging.INFO',format='%(levelname)s:%(message)s')
@@ -256,7 +256,7 @@ def onUrlFound(url):
     sys.stdout.write(url)
     sys.stdout.write("\n")
     sys.stdout.flush()
-    
+
 def onUidFound(bytearray):
     """Called by onPacketFound when frametype is Eddystone UID."""
     global firstTime
@@ -270,11 +270,11 @@ def onUidFound(bytearray):
     SignalTime = time.time() - firstTime
     mac = get_mac()
     print("Signal Time : {}".format(time.time() - firstTime))
-       
+
     logging.info("Signal Time : {}".format(time.time() - firstTime))
     print("\n/*       Eddystone-UID      */")
     logging.info("\n/*       Eddystone-UID      */")
-    
+
     f.write("\n/*       Eddystone-UID      */")
     f.write("Signal Time : {}".format(time.time() - firstTime))
     namespace = ("".join(format(x, '02x') for x in bytearray[0:10]))
@@ -282,17 +282,17 @@ def onUidFound(bytearray):
     print("Namspace: {}\nInstance: {}\n".format(namespace, instance))
     logging.info("Namspace: {}\nInstance: {}\n".format(namespace, instance))
     f.write("Namspace: {}\nInstance: {}\n".format(namespace, instance))
-    
+
     addvalue(cursor, con, mac, ipAddress, SignalTime, namespace, instance)
     con.commit()
     current_time = time.ctime()
     print(current_time)
      #return time.time() - startTime
-    firstTime = time.time()    
+    firstTime = time.time()
     totalTime+=SignalTime
     print("totalTime : {}".format(totalTime))
-    
- 
+
+
 def onPacketFound(packet):
     """Called by the scan function for each beacon packets found."""
     data = bytearray.fromhex(packet)
@@ -353,7 +353,7 @@ def scan(duration=None):
     try:
         startTime = time.time()
         #(startTime)
-        
+
         for line in dump.stdout:
             #print(time.time()-startTime)
             #startTime=time.time()
@@ -445,4 +445,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
