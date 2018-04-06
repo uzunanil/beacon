@@ -1,11 +1,11 @@
 import sqlite3
 
-def createtable():
+def createDeviceTable():
     con = sqlite3.connect("devices.db")
     cursor = con.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS MY_DEVICES (id INTEGER PRIMARY KEY AUTOINCREMENT,create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,DEVICE_UNIQUE_IDENTIFIER TEXT,RSSI INT,last_update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,IS_ACTIV INT DEFAULT 1)")
 
-def addvalue(cursor, rssi, dev_id, existance_table):
+def addBeaconValue(cursor, rssi, dev_id, existance_table):
     params = (dev_id, rssi)
     sql ="INSERT INTO MY_DEVICES (device_id, rssi) VALUES (?,?)"
     cursor.execute(sql,params)
@@ -14,7 +14,7 @@ def addvalue(cursor, rssi, dev_id, existance_table):
 def update(cursor, device_id, rssi):
    params = (device_id, rssi)
    query  = ("UPDATE MY_DEVICES SET rssi={}, last_update_date=GETDATE() where device_id={};".format(rssi, device_id))
-   cursor.execute(query)
+   cursor.execute(query)s
 
 def readTable(database_name):
     existance_table = {}

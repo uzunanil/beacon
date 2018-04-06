@@ -13,7 +13,7 @@ import uuid
 from pprint import pprint
 from enum import Enum
 from beaconsql import *
-
+from log_dev_sql import *
 
 application_name = 'PyBeacon'
 #version = __version__

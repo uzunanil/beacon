@@ -4,7 +4,8 @@ if __name__ == "__main__":
 
     firstTime = time.time()
     read_from_db()
-
+    #_thread.start_new_thread(func_name, (parameters))
+    #Scan & InsertUpdate function as thread
     scan()
     '''con = sqlite3.connect("/home/pi/Desktop/beaconnn.db")
     cursor = con.cursor()

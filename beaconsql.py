@@ -13,6 +13,7 @@ def addvalue(cursor, con, m, ip, st, nam, ins):
     cursor.execute(sql,params)
 
 
+
 def read_from_db():
     con = sqlite3.connect("beaconnn.db")
     c = con.cursor()
