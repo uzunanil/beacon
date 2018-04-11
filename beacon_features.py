@@ -24,26 +24,26 @@ def getserial()
         cpuserial = "ERROR000000000"
 
     return cpuserial
-getserial()
+
 #************************UUID************************
-uuid = uuid.uuid4()
-print(uuid)
 #*****************RSSI & DEV_ID**********************
-def main():
+def get_rssi_and_dev_id():
     output = subprocess.check_output('sudo btmgmt find',shell=True)
     lines = output.splitlines()
+    dev2rssi = {}
     for i, line in enumerate(lines):
         line = str(line)
         if line.find( "Beacon" )!=-1:
-           print ( line )
-           print(lines[i-2])
-           beacon_infoline = lines[i-2].split()
-           print(beacon_infoline)
-           rssi = int(beacon_infoline[7])
-           device_id = beacon_infoline[3]
-           print (rssi)
-           print(device_id)
-           return rssi, device_id
+            print ( line )
+            print(lines[i-2])
+            beacon_infoline = lines[i-2].split()
+            print(beacon_infoline)
+            rssi = int(beacon_infoline[7])
+            device_id = beacon_infoline[3]
+            print (rssi)
+            print(device_id)
+            dev2rssi[device_id] = rssi
+    return dev2rssi
 #*********************DISTANCE***********************
 def calculate_accuracy(txpower, rssi):
     if rssi == 0:
@@ -58,21 +58,24 @@ def calculate_accuracy(txpower, rssi):
 def INSERTorUPDATE (existance_table, cursor):
     while True:
         print("**************************")
-
-        rssi, dev_id = main()
-        if existance_table.get(dev_id) == None:
-            existance_table[dev_id] = True
-            addBeaconValue(cursor, rssi, dev_id, existance_table)
-        else:
-            update(cursor, dev_id, rssi)
+        dev2rssi = get_rssi_and_dev_id()
+        for dev_id, rssi in dev2rssi.items():
+            print("rssi : {} txpower : {}".format(rssi, txpower))
+            distance = calculate_accuracy(txpower, rssi)
+            print("Distance(meter): {}".format(distance/10000))
+            if existance_table.get(dev_id) == None:
+                existance_table[dev_id] = True
+                addBeaconValue(cursor, rssi, dev_id, existance_table)
+                uuid = uuid.uuid4()
+                mac = get_mac()
+                cpuserial = getserial()
+                addLogsValue (cursor, uuid, dev_id, mac, cpuserial, distance)
+            else:
+                update(cursor, dev_id, rssi)
+                updateLogValues(distance, dev_id)
         con.commit()
-
-
         #Distance Computation
-        print("rssi : {} txpower : {}".format(rssi, txpower))
-        distance = calculate_accuracy(txpower, rssi)
 
-        print("Distance(meter): {}".format(distance/10000))
         time.sleep(10)
 
 def sampleThreadFunc(x, y):

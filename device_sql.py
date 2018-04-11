@@ -14,7 +14,7 @@ def addBeaconValue(cursor, rssi, dev_id, existance_table):
 def update(cursor, device_id, rssi):
    params = (device_id, rssi)
    query  = ("UPDATE MY_DEVICES SET rssi={}, last_update_date=GETDATE() where device_id={};".format(rssi, device_id))
-   cursor.execute(query)s
+   cursor.execute(query)
 
 def readTable(database_name):
     existance_table = {}
